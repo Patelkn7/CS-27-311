@@ -25,6 +25,16 @@ import sys
 import threading
 import time
 
+# Windows fix: make pyusb find the libusb DLL that ships with libusb-package.
+try:
+    import libusb_package
+    import usb.backend.libusb1 as _libusb1
+    _orig_get_backend = _libusb1.get_backend
+    _libusb1.get_backend = lambda find_library=None: _orig_get_backend(
+        find_library=libusb_package.find_library)
+except Exception:
+    pass
+
 import cflib.crtp
 from cflib.crazyflie.log import LogConfig
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
